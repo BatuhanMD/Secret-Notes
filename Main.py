@@ -37,28 +37,28 @@ f = Fernet(key)
 
 smaster_key = None
 
-#Button functions
+# Button functions
 def encrypt():
     global smaster_key
-    master_key = master_entry.get()
-    secret_txt = secret_text.get("1.0",END)
+    if smaster_key is None:
+        smaster_key = master_entry.get()
+    secret_txt = secret_text.get("1.0", END)
     encrypted_msg = f.encrypt(secret_txt.encode())
     with open('mysecret.txt', 'a') as file:
-        file.write(title_entry.get())
-        file.write("\n")
-        file.write(encrypted_msg.decode('utf-8'))
-        file.write("\n")
-         
+        file.write(title_entry.get() + '\n')
+        file.write(encrypted_msg.decode('utf-8') + '\n')
+
 def decrypt():
     global smaster_key
-    key = master_entry.get()
-    if  key == smaster_key :
-        encrypt_msg = secret_text.get("1.0", END)
-        decode_msg = f.decrypt(encrypt_msg.encode('utf-8'))  
-        secret_text.delete("1.0", END) 
-        secret_text.insert(END, decode_msg.decode('utf-8')) 
-    else:
-        print("Error")
+    if smaster_key is None:
+        smaster_key = master_entry.get()
+    encrypted_msg = secret_text.get("1.0", END)
+    try:
+        decoded_msg = f.decrypt(encrypted_msg.encode('utf-8'))
+        secret_text.delete("1.0", END)
+        secret_text.insert(END, decoded_msg.decode('utf-8'))
+    except Exception as e:
+        print("Decryption failed:", str(e))
 
 #Save and Encrypt Button
 button1 = Button(text="Save and Encrypt",command=encrypt)

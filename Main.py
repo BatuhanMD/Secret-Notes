@@ -13,20 +13,37 @@ image_label = Label(window, image=image)
 image_label.pack(pady=10)
 
 #Title label and entry
-
-title_label = Label("Enter Your Title")
-title_label.pack()
-
+title_label = Label(text="Enter Your Title",font=("Arial",9,"bold"))
+title_label.pack(pady=5)
 title_entry = Entry()
 title_entry.pack()
 
+#Secret label and text
+secret_label = Label(text="Enter Your Secret",font=("Arial",9,"bold"))
+secret_label.pack(pady=5)
+secret_text = Text(width=20,height=10)
+secret_text.pack()
 
+#Master key label and entry
+master_label = Label(text="Enter Master Key",font=("Arial",9,"bold"))
+master_label.pack(pady=5)
+master_entry = Entry()
+master_entry.pack()
 
+#Button functions
+def encrypt():
+    pass
 
+def decrypt():
+    pass
 
+#Save and Encrypt Button
+button1 = Button(text="Save and Encrypt",command=encrypt)
+button1.pack(pady=10)
 
-
-
+#Decrypt Button
+button2 = Button(text="Decrypt",command=decrypt)
+button2.pack(pady=2)
 
 
 

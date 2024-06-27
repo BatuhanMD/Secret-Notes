@@ -1,5 +1,6 @@
 from tkinter import *
 from PIL import Image, ImageTk
+from cryptography.fernet import Fernet
 
 #Window
 window = Tk()
@@ -30,10 +31,20 @@ master_label.pack(pady=5)
 master_entry = Entry()
 master_entry.pack()
 
+#Fernet key and object
+key = Fernet.generate_key()
+f = Fernet(key)
 #Button functions
 def encrypt():
-    pass
-
+    master_key = master_entry.get()
+    secret_txt = secret_text.get("1.0",END)
+    encrypted_msg = f.encrypt(secret_txt.encode())
+    with open('mysecret.txt', 'a') as file:
+        file.write(title_entry.get())
+        file.write("\n")
+        file.write(encrypted_msg.decode('utf-8'))
+        file.write("\n")
+         
 def decrypt():
     pass
 

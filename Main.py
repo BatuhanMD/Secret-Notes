@@ -28,14 +28,18 @@ secret_text.pack()
 #Master key label and entry
 master_label = Label(text="Enter Master Key",font=("Arial",9,"bold"))
 master_label.pack(pady=5)
-master_entry = Entry()
+master_entry = Entry(show="*")
 master_entry.pack()
 
 #Fernet key and object
 key = Fernet.generate_key()
 f = Fernet(key)
+
+smaster_key = None
+
 #Button functions
 def encrypt():
+    global smaster_key
     master_key = master_entry.get()
     secret_txt = secret_text.get("1.0",END)
     encrypted_msg = f.encrypt(secret_txt.encode())
@@ -46,7 +50,15 @@ def encrypt():
         file.write("\n")
          
 def decrypt():
-    pass
+    global smaster_key
+    key = master_entry.get()
+    if  key == smaster_key :
+        encrypt_msg = secret_text.get("1.0", END)
+        decode_msg = f.decrypt(encrypt_msg.encode('utf-8'))  
+        secret_text.delete("1.0", END) 
+        secret_text.insert(END, decode_msg.decode('utf-8')) 
+    else:
+        print("Error")
 
 #Save and Encrypt Button
 button1 = Button(text="Save and Encrypt",command=encrypt)

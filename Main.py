@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 from PIL import Image, ImageTk
 from cryptography.fernet import Fernet
 
@@ -42,7 +43,7 @@ def encrypt():
     key_array.append(master_entry.get())
     secret_txt = secret_text.get("1.0", END)
     encrypted_msg = f.encrypt(secret_txt.encode())
-    print(key_array)
+    #print(key_array)
     with open('mysecret.txt', 'a') as file:
         file.write(title_entry.get() + '\n')
         file.write(encrypted_msg.decode('utf-8') + '\n')
@@ -54,10 +55,14 @@ def decrypt():
             lines = file.readlines()
             for i in range(1, len(lines), 2):  # Başlıkları atlayıp şifreli mesajları okur
                 if encrypted_msg == lines[i].strip():
-                    decoded_msg = f.decrypt(encrypted_msg.encode('utf-8'))
-                    secret_text.delete("1.0", END)
-                    secret_text.insert(END, decoded_msg.decode('utf-8'))
-                    print(f"Çözülen mesaj dosyada {i+1}. satırda bulunuyor")
+                    key_index = (i - 1) // 2
+                    if master_entry.get() == key_array[key_index]:
+                        decoded_msg = f.decrypt(encrypted_msg.encode('utf-8'))
+                        secret_text.delete("1.0", END)
+                        secret_text.insert(END, decoded_msg.decode('utf-8'))
+                        #print(f"Çözülen mesaj dosyada {i+1}. satırda bulunuyor")
+                    else:
+                        messagebox.showerror("Hata", "Yanlış anahtar")
                     break
             else:
                 print("Şifreli mesaj bulunamadı")
@@ -71,13 +76,5 @@ button1.pack(pady=10)
 #Decrypt Button
 button2 = Button(text="Decrypt",command=decrypt)
 button2.pack(pady=2)
-
-
-
-
-
-
-
-
 
 window.mainloop()

@@ -35,30 +35,34 @@ master_entry.pack()
 key = Fernet.generate_key()
 f = Fernet(key)
 
-smaster_key = None
+key_array = []
 
 # Button functions
 def encrypt():
-    global smaster_key
-    if smaster_key is None:
-        smaster_key = master_entry.get()
+    key_array.append(master_entry.get())
     secret_txt = secret_text.get("1.0", END)
     encrypted_msg = f.encrypt(secret_txt.encode())
+    print(key_array)
     with open('mysecret.txt', 'a') as file:
         file.write(title_entry.get() + '\n')
         file.write(encrypted_msg.decode('utf-8') + '\n')
 
 def decrypt():
-    global smaster_key
-    if smaster_key is None:
-        smaster_key = master_entry.get()
-    encrypted_msg = secret_text.get("1.0", END)
+    encrypted_msg = secret_text.get("1.0", END).strip()
     try:
-        decoded_msg = f.decrypt(encrypted_msg.encode('utf-8'))
-        secret_text.delete("1.0", END)
-        secret_text.insert(END, decoded_msg.decode('utf-8'))
+        with open('mysecret.txt', 'r') as file:
+            lines = file.readlines()
+            for i in range(1, len(lines), 2):  # Başlıkları atlayıp şifreli mesajları okur
+                if encrypted_msg == lines[i].strip():
+                    decoded_msg = f.decrypt(encrypted_msg.encode('utf-8'))
+                    secret_text.delete("1.0", END)
+                    secret_text.insert(END, decoded_msg.decode('utf-8'))
+                    print(f"Çözülen mesaj dosyada {i+1}. satırda bulunuyor")
+                    break
+            else:
+                print("Şifreli mesaj bulunamadı")
     except Exception as e:
-        print("Decryption failed:", str(e))
+        print("Deşifre başarısız:", str(e))
 
 #Save and Encrypt Button
 button1 = Button(text="Save and Encrypt",command=encrypt)
